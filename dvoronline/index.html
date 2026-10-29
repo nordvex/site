@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ДворОнлайн — свободные парковочные места во дворах</title>
+<meta name="description" content="ДворОнлайн распознаёт свободные парковочные места во дворах по камерам с помощью YOLO и показывает их на карте в реальном времени.">
+<meta name="theme-color" content="#08131C">
+<meta property="og:title" content="ДворОнлайн — свободные места во дворах в реальном времени">
+<meta property="og:description" content="Камеры смотрят на двор, YOLO находит машины, карта показывает свободные места. Демо-прототип.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/manrope-700-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="page-glow" aria-hidden="true"></div>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a class="logo" href="#top" aria-label="ДворОнлайн — на главную">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none">
+          <rect x="1" y="1" width="38" height="38" rx="12" fill="url(#lg)"/>
+          <path d="M11 15V11h4M29 15V11h-4M11 25v4h4M29 25v4h-4" stroke="#08131C" stroke-width="2.4" stroke-linecap="round"/>
+          <rect x="16" y="16" width="8" height="8" rx="2.5" fill="#08131C"/>
+          <defs>
+            <linearGradient id="lg" x1="4" y1="2" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#17E0CF"/><stop offset=".55" stop-color="#43E08B"/><stop offset="1" stop-color="#5B6CFF"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+      <span class="logo-text">Двор<b>Онлайн</b></span>
+    </a>
+
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#how">Как работает</a>
+      <a href="#map">Карта</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#install">Приложение</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" type="button" data-modal="login">Войти</button>
+      <a class="btn btn-primary btn-sm" href="#map">Открыть демо</a>
+    </div>
+
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="Мобильная навигация">
+      <a href="#how">Как работает</a>
+      <a href="#map">Карта</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#install">Приложение</a>
+      <a href="#faq">Вопросы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <div class="mobile-menu-actions">
+      <button class="btn btn-outline" type="button" data-modal="login">Войти</button>
+      <a class="btn btn-primary" href="#map">Открыть демо</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="cascade cascade--tr" aria-hidden="true">
+    <span class="cascade__sq cascade__sq--1"></span>
+    <span class="cascade__sq cascade__sq--2"></span>
+    <span class="cascade__sq cascade__sq--3"></span>
+    <span class="cascade__sq cascade__sq--4"></span>
+  </div>
+  <div class="cascade cascade--bl" aria-hidden="true">
+    <span class="cascade__sq cascade__sq--1"></span>
+    <span class="cascade__sq cascade__sq--2"></span>
+    <span class="cascade__sq cascade__sq--3"></span>
+  </div>
+
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse-dot"></span>YOLO · распознавание в реальном времени</span>
+
+      <h1>Свободные места<br>во дворах <span class="grad-text">видно<br>сразу</span></h1>
+
+      <p class="lead">ДворОнлайн смотрит на камеры вашего двора и показывает, где место действительно свободно. Без датчиков, шлагбаумов и кругов по району.</p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#map">
+          Посмотреть демо-карту
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-outline btn-lg" href="#how">
+          <span class="play-icon" aria-hidden="true"></span>
+          Как это работает
+        </a>
+      </div>
+
+      <ul class="hero-meta">
+        <li>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Демо без регистрации
+        </li>
+        <li>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Пилот 2026 · набор дворов
+        </li>
+      </ul>
+    </div>
+
+    <div class="hero-visual">
+      <div class="live-card">
+        <div class="live-head">
+          <div class="live-title">
+            <span class="live-dot" aria-hidden="true"></span>
+            Демо-сцена · двор 12
+            <span class="live-tag">ДЕМО</span>
+          </div>
+          <div class="live-time" id="live-time">демонстрация</div>
+        </div>
+
+        <div class="lot-wrap">
+          <span class="frame-corner frame-corner--tl" aria-hidden="true"></span>
+          <span class="frame-corner frame-corner--tr" aria-hidden="true"></span>
+          <span class="frame-corner frame-corner--bl" aria-hidden="true"></span>
+          <span class="frame-corner frame-corner--br" aria-hidden="true"></span>
+
+          <svg class="lot" viewBox="0 0 560 320" role="img" aria-label="Схема двора: 7 свободных мест из 12">
+            <defs>
+              <linearGradient id="carGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7B5CF6"/><stop offset="1" stop-color="#A855F7"/>
+              </linearGradient>
+              <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#17E0CF" stop-opacity="0"/>
+                <stop offset=".75" stop-color="#17E0CF" stop-opacity=".07"/>
+                <stop offset="1" stop-color="#17E0CF" stop-opacity=".18"/>
+              </linearGradient>
+              <pattern id="asphalt" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M0 40V0h40" fill="none" stroke="rgba(255,255,255,.028)" stroke-width="1"/>
+              </pattern>
+            </defs>
+
+            <rect x="1" y="1" width="558" height="318" rx="18" fill="#0A1A24" stroke="rgba(255,255,255,.08)"/>
+            <rect x="1" y="1" width="558" height="318" rx="18" fill="url(#asphalt)"/>
+
+            <!-- lane -->
+            <rect x="20" y="112" width="520" height="96" rx="10" fill="rgba(255,255,255,.018)"/>
+            <path d="M34 160h492" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-dasharray="16 14" stroke-linecap="round"/>
+            <path d="M476 148l14 12-14 12" stroke="rgba(67,224,139,.5)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- top bays -->
+            <g>
+              <rect x="38" y="36" width="74" height="54" rx="9" class="bay bay--busy"/>
+              <rect x="120" y="36" width="74" height="54" rx="9" class="bay bay--free"/>
+              <rect x="202" y="36" width="74" height="54" rx="9" class="bay bay--busy"/>
+              <rect x="284" y="36" width="74" height="54" rx="9" class="bay bay--busy"/>
+              <rect x="366" y="36" width="74" height="54" rx="9" class="bay bay--free"/>
+              <rect x="448" y="36" width="74" height="54" rx="9" class="bay bay--free"/>
+            </g>
+            <!-- bottom bays -->
+            <g>
+              <rect x="38" y="230" width="74" height="54" rx="9" class="bay bay--free"/>
+              <rect x="120" y="230" width="74" height="54" rx="9" class="bay bay--busy"/>
+              <rect x="202" y="230" width="74" height="54" rx="9" class="bay bay--free"/>
+              <rect x="284" y="230" width="74" height="54" rx="9" class="bay bay--free"/>
+              <rect x="366" y="230" width="74" height="54" rx="9" class="bay bay--busy"/>
+              <rect x="448" y="230" width="74" height="54" rx="9" class="bay bay--free"/>
+            </g>
+
+            <!-- free plus marks -->
+            <g class="free-marks">
+              <path d="M157 57v14M150 64h14" />
+              <path d="M403 57v14M396 64h14" />
+              <path d="M485 57v14M478 64h14" />
+              <path d="M75 251v14M68 258h14" />
+              <path d="M239 251v14M232 258h14" />
+              <path d="M321 251v14M314 258h14" />
+              <path d="M485 251v14M478 258h14" />
+            </g>
+
+            <!-- cars -->
+            <g class="cars">
+              <g class="car"><rect x="47" y="44" width="56" height="38" rx="11" fill="url(#carGrad)"/><rect x="59" y="52" width="32" height="11" rx="5" fill="rgba(255,255,255,.22)"/></g>
+              <g class="car"><rect x="211" y="44" width="56" height="38" rx="11" fill="url(#carGrad)"/><rect x="223" y="52" width="32" height="11" rx="5" fill="rgba(255,255,255,.22)"/></g>
+              <g class="car"><rect x="293" y="44" width="56" height="38" rx="11" fill="url(#carGrad)"/><rect x="305" y="52" width="32" height="11" rx="5" fill="rgba(255,255,255,.22)"/></g>
+              <g class="car"><rect x="129" y="238" width="56" height="38" rx="11" fill="url(#carGrad)"/><rect x="141" y="246" width="32" height="11" rx="5" fill="rgba(255,255,255,.22)"/></g>
+              <g class="car"><rect x="375" y="238" width="56" height="38" rx="11" fill="url(#carGrad)"/><rect x="387" y="246" width="32" height="11" rx="5" fill="rgba(255,255,255,.22)"/></g>
+            </g>
+
+            <!-- detection boxes -->
+            <g class="detections">
+              <rect x="44" y="41" width="62" height="44" rx="5" class="det-box"/>
+              <rect x="44" y="26" width="56" height="13" rx="3" class="det-label-bg"/>
+              <text x="49" y="35.5" class="det-label">car 0.96</text>
+
+              <rect x="372" y="235" width="62" height="44" rx="5" class="det-box"/>
+              <rect x="372" y="220" width="56" height="13" rx="3" class="det-label-bg"/>
+              <text x="377" y="229.5" class="det-label">car 0.92</text>
+            </g>
+
+            <rect class="scan-line" x="20" y="20" width="520" height="2" rx="1" fill="#2FF2E2" opacity=".7"/>
+          </svg>
+        </div>
+
+        <div class="live-foot">
+          <div class="live-count"><b>7</b><span>свободно из 12</span></div>
+          <div class="live-bars" aria-hidden="true">
+            <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <a class="mini-link" href="#map">Маршрут →</a>
+        </div>
+      </div>
+
+      <div class="float-badge float-badge--top">
+        <span class="float-badge__icon">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div><b>YOLO</b><span>модель детекции</span></div>
+      </div>
+
+      <div class="float-badge float-badge--bottom">
+        <span class="float-badge__icon float-badge__icon--violet">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2v3M10 15v3M2 10h3M15 10h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        <div><b>Пилот</b><span>набор первых дворов</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="stats-row">
+      <div class="stat"><dt>статус проекта</dt><dd class="is-text">Пилот · 2026</dd></div>
+      <div class="stat"><dt>дворов подключено</dt><dd>0</dd></div>
+      <div class="stat"><dt>целевая точность</dt><dd>96–99<i>%</i></dd></div>
+      <div class="stat"><dt>обновление данных</dt><dd class="is-text">в пилоте</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= HOW ================= -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Как это работает</span>
+      <h2>От кадра с камеры до свободного места</h2>
+      <p>Четыре шага, которые сервис выполняет автоматически.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="step reveal">
+        <span class="step__num">01</span>
+        <span class="step__icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2.5" y="6" width="13" height="12" rx="3" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M15.5 10.5l5-2.5v8l-5-2.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <h3>Камера снимает двор</h3>
+        <p>Подойдёт обычная IP-камера на подъезде или парковке. Дополнительное железо не нужно.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step__num">02</span>
+        <span class="step__icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M3 9h18M9 3v18" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>
+            <circle cx="15" cy="15" r="2" fill="currentColor"/>
+          </svg>
+        </span>
+        <h3>YOLO находит машины</h3>
+        <p>Модель размечает каждый автомобиль и сопоставляет его с разметкой парковочных мест.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step__num">03</span>
+        <span class="step__icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 18V9M9 18V5M14 18v-6M19 18v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 21h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>
+          </svg>
+        </span>
+        <h3>Считаем свободные</h3>
+        <p>Сервис обновляет статус каждого места и складывает его в карту двора.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step__num">04</span>
+        <span class="step__icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+        </span>
+        <h3>Водитель едет на место</h3>
+        <p>Открывает карту, видит свободные места и строит маршрут в один клик.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= DEMO / VISION ================= -->
+<section class="section section--tight" id="vision">
+  <div class="container">
+    <div class="vision reveal">
+      <div class="vision__copy">
+        <span class="eyebrow">Демонстрация</span>
+        <h2>Так двор видит камера.<br>А так — модель.</h2>
+        <p>Переключите разметку: YOLO обводит каждую машину рамкой, определяет класс объекта и уверенность. Остальное — арифметика свободных мест.</p>
+
+        <div class="vision__toggle" role="group" aria-label="Режим отображения">
+          <button type="button" class="seg" data-vision="raw" aria-pressed="false">Кадр с камеры</button>
+          <button type="button" class="seg is-active" data-vision="yolo" aria-pressed="true">Разметка YOLO</button>
+        </div>
+
+        <ul class="chips">
+          <li><b>96–99%</b> цель</li>
+          <li><b>24 fps</b> цель</li>
+          <li><b>день / ночь</b> съёмка</li>
+          <li><b>car</b> + разметка мест</li>
+        </ul>
+      </div>
+
+      <div class="vision__stage" data-mode="yolo">
+        <div class="vision__frame">
+          <div class="vision__hud">
+            <span class="hud-dot"></span>
+            cam-04 · демо-сцена
+            <span class="hud-time">14:32:07</span>
+          </div>
+
+          <svg class="scene" viewBox="0 0 720 440" role="img" aria-label="Кадр с камеры двора с разметкой автомобилей">
+            <defs>
+              <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#122A38"/><stop offset="1" stop-color="#0A1822"/>
+              </linearGradient>
+              <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#9A6BF8"/><stop offset="1" stop-color="#5B4CD8"/>
+              </linearGradient>
+              <linearGradient id="carBody2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#4FD9C9"/><stop offset="1" stop-color="#1E9C93"/>
+              </linearGradient>
+            </defs>
+
+            <rect width="720" height="440" fill="url(#skyG)"/>
+
+            <!-- buildings silhouette -->
+            <path d="M0 150h120v-40h90v22h110v-52h100v30h120v-18h180v78H0z" fill="#0E2230" opacity=".9"/>
+            <g fill="#F4D06F" opacity=".28">
+              <rect x="26" y="120" width="8" height="10"/><rect x="50" y="120" width="8" height="10"/>
+              <rect x="132" y="118" width="8" height="10"/><rect x="160" y="118" width="8" height="10"/>
+              <rect x="336" y="96" width="8" height="10"/><rect x="364" y="96" width="8" height="10"/>
+              <rect x="560" y="112" width="8" height="10"/><rect x="588" y="112" width="8" height="10"/>
+            </g>
+
+            <!-- asphalt -->
+            <rect y="150" width="720" height="290" fill="#101F29"/>
+            <path d="M0 150h720" stroke="rgba(255,255,255,.06)"/>
+
+            <!-- parking bay lines, perspective-ish -->
+            <g stroke="rgba(255,255,255,.22)" stroke-width="2" opacity=".55">
+              <path d="M40 300l-14 100M150 300l-8 100M260 300l-2 100M370 300l4 100M480 300l10 100M590 300l16 100M680 300l20 100"/>
+              <path d="M26 400h674"/>
+            </g>
+
+            <!-- free bays glow -->
+            <g class="scene-free">
+              <path d="M152 302h106l-6 96H144z" fill="rgba(23,224,207,.07)"/>
+              <path d="M372 302h106l4 96H364z" fill="rgba(23,224,207,.07)"/>
+            </g>
+
+            <!-- cars -->
+            <g class="scene-car" data-car="1" transform="translate(52 296)">
+              <ellipse cx="52" cy="96" rx="56" ry="10" fill="rgba(0,0,0,.45)"/>
+              <path d="M8 82c0-6 3-11 8-13l6-20c2-7 9-12 17-12h28c8 0 15 5 17 12l6 20c5 2 8 7 8 13v8c0 4-3 7-7 7H15c-4 0-7-3-7-7z" fill="url(#carBody)"/>
+              <path d="M24 48h56l5 17H19z" fill="rgba(255,255,255,.18)"/>
+              <rect x="10" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+              <rect x="80" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+            </g>
+            <g class="scene-car" data-car="2" transform="translate(272 300) scale(.98)">
+              <ellipse cx="52" cy="96" rx="56" ry="10" fill="rgba(0,0,0,.45)"/>
+              <path d="M8 82c0-6 3-11 8-13l6-20c2-7 9-12 17-12h28c8 0 15 5 17 12l6 20c5 2 8 7 8 13v8c0 4-3 7-7 7H15c-4 0-7-3-7-7z" fill="url(#carBody2)"/>
+              <path d="M24 48h56l5 17H19z" fill="rgba(255,255,255,.18)"/>
+              <rect x="10" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+              <rect x="80" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+            </g>
+            <g class="scene-car" data-car="3" transform="translate(492 296)">
+              <ellipse cx="52" cy="96" rx="56" ry="10" fill="rgba(0,0,0,.45)"/>
+              <path d="M8 82c0-6 3-11 8-13l6-20c2-7 9-12 17-12h28c8 0 15 5 17 12l6 20c5 2 8 7 8 13v8c0 4-3 7-7 7H15c-4 0-7-3-7-7z" fill="url(#carBody)"/>
+              <path d="M24 48h56l5 17H19z" fill="rgba(255,255,255,.18)"/>
+              <rect x="10" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+              <rect x="80" y="76" width="14" height="6" rx="3" fill="#F4D06F"/>
+            </g>
+
+            <!-- yolo overlay -->
+            <g class="scene-overlay">
+              <g class="obb">
+                <rect x="46" y="332" width="112" height="70" rx="4"/>
+                <rect x="46" y="316" width="66" height="15" rx="3" class="obb__bg"/>
+                <text x="51" y="327">car 0.96</text>
+              </g>
+              <g class="obb">
+                <rect x="266" y="336" width="112" height="70" rx="4"/>
+                <rect x="266" y="320" width="66" height="15" rx="3" class="obb__bg"/>
+                <text x="271" y="331">car 0.93</text>
+              </g>
+              <g class="obb">
+                <rect x="486" y="332" width="112" height="70" rx="4"/>
+                <rect x="486" y="316" width="66" height="15" rx="3" class="obb__bg"/>
+                <text x="491" y="327">car 0.94</text>
+              </g>
+
+              <g class="freebox">
+                <rect x="132" y="360" width="118" height="40" rx="4"/>
+                <text x="140" y="385">free</text>
+              </g>
+              <g class="freebox">
+                <rect x="372" y="360" width="106" height="40" rx="4"/>
+                <text x="380" y="385">free</text>
+              </g>
+
+              <g class="scene-status">
+                <rect x="16" y="58" width="168" height="42" rx="10" class="scene-status__bg"/>
+                <circle cx="38" cy="79" r="5" class="scene-status__dot"/>
+                <text x="52" y="75" class="scene-status__title">7 свободно · 5 занято</text>
+                <text x="52" y="90" class="scene-status__sub">обновлено 15 сек назад</text>
+              </g>
+            </g>
+
+            <rect class="scene-scan" x="0" y="150" width="720" height="70" fill="url(#scanGrad)"/>
+          </svg>
+
+          <div class="vision__legend">
+            <span><i class="lg-dot lg-dot--teal"></i>свободно</span>
+            <span><i class="lg-dot lg-dot--violet"></i>занято</span>
+            <span class="vision__legend-time" id="vision-time">15 сек назад</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAP ================= -->
+<section class="section" id="map">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Карта</span>
+      <h2>Карта дворов</h2>
+      <p>Демонстрация интерфейса на вымышленных адресах. Реальные дворы ещё не подключены.</p>
+    </div>
+
+    <div class="map-shell reveal">
+      <aside class="map-side">
+        <div class="map-filters">
+          <label class="field">
+            <span>Район</span>
+            <select id="district-filter">
+              <option value="all">Все районы</option>
+            </select>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="free-only">
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+            <span class="switch__label">Только со свободными</span>
+          </label>
+        </div>
+
+        <ul class="yard-list" id="yard-list"></ul>
+
+        <p class="map-note">Все адреса и статусы — пример. Подключение дворов начнётся с пилота.</p>
+      </aside>
+
+      <div class="map-canvas-wrap">
+        <div id="yard-map" class="map-canvas" role="application" aria-label="Демонстрационная карта дворов"></div>
+        <span class="map-demo">демо-карта</span>
+        <div class="map-legend">
+          <span><i class="lg-dot lg-dot--teal"></i>есть места</span>
+          <span><i class="lg-dot lg-dot--amber"></i>почти занято</span>
+          <span><i class="lg-dot lg-dot--violet"></i>занято</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="section" id="pricing">
+  <div class="cascade cascade--br" aria-hidden="true">
+    <span class="cascade__sq cascade__sq--1"></span>
+    <span class="cascade__sq cascade__sq--2"></span>
+  </div>
+
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Тарифы</span>
+      <h2>Подписка на дворы, а не на парковку</h2>
+      <p>Цены демонстрационные. Оплата пока не подключена.</p>
+    </div>
+
+    <div class="billing-toggle reveal" role="group" aria-label="Период оплаты">
+      <button type="button" class="seg is-active" data-billing="month" aria-pressed="true">Месяц</button>
+      <button type="button" class="seg" data-billing="year" aria-pressed="false">Год <span class="seg__badge">−20%</span></button>
+    </div>
+
+    <div class="plans">
+      <article class="plan reveal">
+        <header>
+          <h3>Демо</h3>
+          <p>Посмотреть, как это работает</p>
+        </header>
+        <div class="plan__price">
+          <span class="plan__sum" data-price-month="0" data-price-year="0">0</span><span class="plan__cur">₽</span>
+          <span class="plan__per" data-per>навсегда</span>
+        </div>
+        <ul class="plan__list">
+          <li>1 двор в демо-режиме</li>
+          <li>Статус мест в реальном времени</li>
+          <li>Просмотр без регистрации</li>
+          <li class="is-off">Маршруты до места</li>
+          <li class="is-off">Уведомления</li>
+        </ul>
+        <a class="btn btn-outline btn-block" href="#map">Открыть демо</a>
+      </article>
+
+      <article class="plan plan--featured reveal">
+        <span class="plan__badge">Лучшая цена</span>
+        <header>
+          <h3>Оптимум</h3>
+          <p>Для тех, кто паркуется каждый день</p>
+        </header>
+        <div class="plan__price">
+          <span class="plan__sum" data-price-month="300" data-price-year="159">300</span><span class="plan__cur">₽</span>
+          <span class="plan__per" data-per>в месяц</span>
+        </div>
+        <ul class="plan__list">
+          <li>10 дворов на выбор</li>
+          <li>Маршруты до свободного места</li>
+          <li>История статусов за 30 дней</li>
+          <li>Уведомления о свободных местах</li>
+          <li class="is-off">API и интеграции</li>
+        </ul>
+        <button class="btn btn-primary btn-block" type="button" data-modal="checkout">Выбрать Оптимум</button>
+      </article>
+
+      <article class="plan reveal plan--custom">
+        <header>
+          <h3>Индивидуально</h3>
+          <p>Для УК, ТСЖ и автопарков</p>
+        </header>
+        <div class="plan__price">
+          <span class="plan__sum plan__sum--text">По запросу</span>
+          <span class="plan__per">под задачу</span>
+        </div>
+        <ul class="plan__list">
+          <li>Подключение своих камер</li>
+          <li>API и вебхуки</li>
+          <li>Отчёты по загрузке двора</li>
+          <li>SLA и приоритетная поддержка</li>
+          <li>Бесплатный пилот</li>
+        </ul>
+        <button class="btn btn-outline btn-block" type="button" data-modal="checkout">Обсудить условия</button>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="section" id="reviews">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Отзывы</span>
+      <h2>Что говорят пользователи</h2>
+      <p>Примеры отзывов. Реальные появятся после пилотного запуска.</p>
+    </div>
+
+    <div class="reviews">
+      <figure class="review reveal">
+        <div class="stars" aria-label="5 из 5">★★★★★</div>
+        <blockquote>Раньше кружила по двору минут десять. Теперь открываю карту и сразу вижу, где стоит машина, а где пусто.</blockquote>
+        <figcaption>
+          <span class="avatar" style="--a:#17E0CF;--b:#5B6CFF">А</span>
+          <span><b>Анна</b><small>Пресня · живёт в доме 12</small></span>
+        </figcaption>
+      </figure>
+
+      <figure class="review reveal">
+        <div class="stars" aria-label="5 из 5">★★★★★</div>
+        <blockquote>Удобно, что видно не «примерно», а конкретное место. За месяц ни разу не пришлось искать парковку наугад.</blockquote>
+        <figcaption>
+          <span class="avatar" style="--a:#8B5CF6;--b:#5B6CFF">М</span>
+          <span><b>Михаил</b><small>Хамовники · автовладелец</small></span>
+        </figcaption>
+      </figure>
+
+      <figure class="review reveal">
+        <div class="stars" aria-label="5 из 5">★★★★★</div>
+        <blockquote>Подключили камеры одного двора как пилот. Видно загрузку по часам — уже используем это в отчётах для жителей.</blockquote>
+        <figcaption>
+          <span class="avatar" style="--a:#43E08B;--b:#17E0CF">С</span>
+          <span><b>Сергей</b><small>управляющая компания</small></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSTALL ================= -->
+<section class="section section--tight" id="install">
+  <div class="container">
+    <div class="install reveal">
+      <div class="install__copy">
+        <span class="eyebrow">Приложение</span>
+        <h2>Добавьте карту на экран телефона</h2>
+        <p>ДворОнлайн работает как веб-приложение: не нужно скачивать из магазина, обновления приходят сами.</p>
+
+        <div class="install__tabs" role="tablist" aria-label="Инструкция по установке">
+          <button type="button" class="seg is-active" role="tab" aria-selected="true" aria-controls="panel-ios" id="tab-ios" data-tab="ios">iOS / Safari</button>
+          <button type="button" class="seg" role="tab" aria-selected="false" aria-controls="panel-android" id="tab-android" data-tab="android">Android / Chrome</button>
+        </div>
+
+        <ol class="install__steps is-active" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios">
+          <li><span>1</span>Откройте сайт в Safari</li>
+          <li><span>2</span>Нажмите «Поделиться» в нижней панели</li>
+          <li><span>3</span>Выберите «На экран “Домой”»</li>
+          <li><span>4</span>Подтвердите — иконка появится на рабочем столе</li>
+        </ol>
+
+        <ol class="install__steps" id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+          <li><span>1</span>Откройте сайт в Chrome</li>
+          <li><span>2</span>Нажмите меню ⋮ в правом верхнем углу</li>
+          <li><span>3</span>Выберите «Установить приложение»</li>
+          <li><span>4</span>Подтвердите установку</li>
+        </ol>
+
+        <p class="install__note">Скриншоты установки — заглушка, заменяются на реальные.</p>
+      </div>
+
+      <div class="phone" aria-hidden="true">
+        <div class="phone__screen">
+          <div class="phone__bar"><span></span><span class="phone__time">14:32</span></div>
+          <div class="phone__map">
+            <span class="phone__pin phone__pin--1">7</span>
+            <span class="phone__pin phone__pin--2">3</span>
+            <span class="phone__pin phone__pin--3">0</span>
+            <span class="phone__road phone__road--h"></span>
+            <span class="phone__road phone__road--v"></span>
+          </div>
+          <div class="phone__card">
+            <b>Пресня · двор 12</b>
+            <span>7 свободно · 5 занято</span>
+            <i class="phone__bar-fill"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="section" id="faq">
+  <div class="container container--narrow">
+    <div class="section-head reveal">
+      <span class="eyebrow">Вопросы</span>
+      <h2>Коротко о главном</h2>
+    </div>
+
+    <div class="faq">
+      <details class="faq__item reveal">
+        <summary>Как камера понимает, что место свободно?</summary>
+        <div class="faq__body"><p>Модель YOLO находит автомобили в кадре и сопоставляет их с заранее размеченными парковочными местами. Если место перекрыто машиной — оно занято, если нет — свободно.</p></div>
+      </details>
+      <details class="faq__item reveal">
+        <summary>Нужно ли покупать своё оборудование?</summary>
+        <div class="faq__body"><p>Нет. Подойдёт уже установленная IP-камера с доступом по RTSP. Если камеры нет — мы подскажем, какая подойдёт под ваш двор.</p></div>
+      </details>
+      <details class="faq__item reveal">
+        <summary>Насколько точны данные?</summary>
+        <div class="faq__body"><p>Целевая точность — 96–99%. Реальные значения появятся после замеров на пилотных дворах: результат зависит от ракурса, освещения и погоды. Поэтому статус всегда показывается с временем последнего обновления.</p></div>
+      </details>
+      <details class="faq__item reveal">
+        <summary>Что с приватностью и персональными данными?</summary>
+        <div class="faq__body"><p>Сервис работает с положением автомобилей, а не с людьми. Номера и лица не распознаются и не хранятся. Полный текст политики — в подвале сайта (заглушка).</p></div>
+      </details>
+      <details class="faq__item reveal">
+        <summary>Работает ли ночью и зимой?</summary>
+        <div class="faq__body"><p>Да, если у камеры есть ИК-подсветка. В снегопады качество может снижаться — такие периоды помечаются в истории статусов.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACTS ================= -->
+<section class="section" id="contacts">
+  <div class="container">
+    <div class="contacts reveal">
+      <div class="contacts__info">
+        <span class="eyebrow">Контакты</span>
+        <h2>Подключим ваш двор</h2>
+        <p>Расскажите, где находится двор и какие камеры уже стоят. Ответим в течение рабочего дня.</p>
+
+        <ul class="contacts__list">
+          <li>
+            <span class="contacts__icon">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </span>
+            <a href="mailto:info@dvoronline.ru">info@dvoronline.ru</a>
+          </li>
+          <li>
+            <span class="contacts__icon">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 4L3 11l6 2.5L11.5 20 21 4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </span>
+            <a href="https://t.me/dvoronline" target="_blank" rel="noopener">@dvoronline</a>
+          </li>
+          <li>
+            <span class="contacts__icon">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
+            </span>
+            <span>Москва, Пресненская наб., 12 <small>(адрес-заглушка)</small></span>
+          </li>
+        </ul>
+
+        <p class="contacts__hint">Демо-прототип: формы не отправляют данные на сервер.</p>
+      </div>
+
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="field">
+          <label for="cf-name">Как вас зовут</label>
+          <input id="cf-name" name="name" type="text" placeholder="Имя" required>
+        </div>
+        <div class="field">
+          <label for="cf-email">Email или Telegram</label>
+          <input id="cf-email" name="email" type="text" placeholder="you@mail.ru" required>
+        </div>
+        <div class="field">
+          <label for="cf-msg">Про двор</label>
+          <textarea id="cf-msg" name="message" rows="4" placeholder="Адрес, сколько мест, какие камеры стоят"></textarea>
+        </div>
+        <label class="check">
+          <input type="checkbox" required>
+          <span>Согласен с <button type="button" class="link" data-modal="privacy">политикой обработки данных</button></span>
+        </label>
+        <button class="btn btn-primary btn-block" type="submit">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="logo" href="#top">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <rect x="1" y="1" width="38" height="38" rx="12" fill="url(#lgf)"/>
+            <path d="M11 15V11h4M29 15V11h-4M11 25v4h4M29 25v4h-4" stroke="#08131C" stroke-width="2.4" stroke-linecap="round"/>
+            <rect x="16" y="16" width="8" height="8" rx="2.5" fill="#08131C"/>
+            <defs><linearGradient id="lgf" x1="4" y1="2" x2="36" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#17E0CF"/><stop offset=".55" stop-color="#43E08B"/><stop offset="1" stop-color="#5B6CFF"/></linearGradient></defs>
+          </svg>
+        </span>
+        <span class="logo-text">Двор<b>Онлайн</b></span>
+      </a>
+      <p>Распознавание свободных парковочных мест во дворах по камерам. Демо-прототип.</p>
+      <div class="footer-social">
+        <a href="https://t.me/dvoronline" target="_blank" rel="noopener" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 4L3 11l6 2.5L11.5 20 21 4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="mailto:info@dvoronline.ru" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="footer-col" aria-label="Продукт">
+      <h3>Продукт</h3>
+      <a href="#how">Как работает</a>
+      <a href="#map">Карта дворов</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#install">Приложение</a>
+    </nav>
+
+    <nav class="footer-col" aria-label="Компания">
+      <h3>Компания</h3>
+      <a href="#reviews">Отзывы</a>
+      <a href="#faq">Вопросы</a>
+      <a href="#contacts">Контакты</a>
+      <a href="#" data-modal="checkout">Подключить двор</a>
+    </nav>
+
+    <nav class="footer-col" aria-label="Документы">
+      <h3>Документы</h3>
+      <a href="#" data-modal="privacy">Политика данных</a>
+      <a href="#" data-modal="offer">Публичная оферта</a>
+      <a href="#" data-modal="requisites">Реквизиты</a>
+      <a href="#" data-modal="login">Вход в кабинет</a>
+    </nav>
+  </div>
+
+  <div class="container footer-bottom">
+    <span>© 2026 ДворОнлайн. Демо-прототип, данные вымышлены.</span>
+    <span>Сделано на чистом HTML, CSS и JavaScript</span>
+  </div>
+</footer>
+
+<!-- ================= MODALS ================= -->
+<div class="modal" id="modal-root" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal__close" type="button" aria-label="Закрыть" data-close>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <h2 class="modal__title" id="modal-title"></h2>
+    <div class="modal__body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span class="toast__icon" aria-hidden="true">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span>
+  <span class="toast__text"></span>
+</div>
+
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/map.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
